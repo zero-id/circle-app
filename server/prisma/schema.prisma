@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model test {
+  id   Int    @id @default(autoincrement())
+  test String
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  fullname  String
+  email     String   @unique
+  password  String
+  follower  Follow[] @relation("follower")
+  following Follow[] @relation("following")
+  profile   Profile?
+  thread    thread[]
+  like      Like[]   @relation("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Follow {
+  followerId  Int
+  followingId Int
+  follower    User     @relation("follower", fields: [followerId], references: [id])
+  following   User     @relation("following", fields: [followingId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@id([followerId, followingId])
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+  avatar    String?
+  cover     String?
+  bio       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model thread {
+  id        Int           @id @default(autoincrement())
+  content   String?
+  userId    Int
+  author    User          @relation(fields: [userId], references: [id])
+  like      Like[]        @relation("thread")
+  threadId  Int?
+  parent    thread?       @relation("threadReplies", fields: [threadId], references: [id])
+  replies   thread[]      @relation("threadReplies")
+  image     ThreadImage[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Like {
+  threadId  Int
+  userId    Int
+  thread    thread   @relation("thread", fields: [threadId], references: [id])
+  user      User     @relation("user", fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([threadId, userId])
+}
+
+model ThreadImage {
+  id        Int      @id @default(autoincrement())
+  image     String?
+  threadId  Int
+  thread    thread   @relation(fields: [threadId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

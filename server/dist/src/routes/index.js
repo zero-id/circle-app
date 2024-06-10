@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+// import profileRoute from "./ProfileRoute";
+const cloudinary_1 = __importDefault(require("../lib/cloudinary"));
+const authRoute_1 = __importDefault(require("./authRoute"));
+const userRoute_1 = __importDefault(require("./userRoute"));
+const threadRouter_1 = __importDefault(require("./threadRouter"));
+const likeRoute_1 = require("./likeRoute");
+const followRoute_1 = require("./followRoute");
+const router = (0, express_1.Router)();
+cloudinary_1.default.config();
+router.use(authRoute_1.default);
+router.use(userRoute_1.default);
+router.use(threadRouter_1.default);
+router.use(likeRoute_1.likeRoute);
+router.use(followRoute_1.followRoute);
+exports.default = router;
