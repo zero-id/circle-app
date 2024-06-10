@@ -4,3 +4,4 @@ node_modules
 
 src/uploads/*.jpg
 src/uploads/*.png
+src/uploads/*.jpeg
